@@ -1,0 +1,16 @@
+{
+  "input": {
+    "value": 42,
+    "items": [
+      1,
+      2,
+      3
+    ]
+  },
+  "submitResults": [
+    {
+      "id": "d080",
+      "answer": 48
+    }
+  ]
+}
