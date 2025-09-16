@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramp Challenge CTF Solution</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #1a1a1a;
+            color: #00ff00;
+            font-family: Monaco, "Courier New", monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #000;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .step {
+            margin-bottom: 30px;
+        }
+
+        .step h2 {
+            margin-bottom: 15px;
+            color: #ffff00;
+        }
+
+        .step p {
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: Monaco, "Courier New", monospace;
+            font-size: 14px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #00ff00;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-family: Monaco, "Courier New", monospace;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error {
+            padding: 15px;
+            background-color: #660000;
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #ff6666;
+            display: none;
+        }
+
+        .flag-display {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #003300;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            min-height: 100px;
+            font-size: 18px;
+            line-height: 1.5;
+            word-break: break-all;
+            display: none;
+        }
+
+        .cursor {
+            animation: blink 1s infinite;
+            background-color: #00ff00;
+            color: #000;
+            padding: 0 2px;
+        }
+
+        .success {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #004400;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+
+        .instructions {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #444;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .solution-notes {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #333;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RAMP CHALLENGE CTF</h1>
+
+        <div class="step">
+            <h2>Capture the Flag</h2>
+            <p>Enter the extracted URL from the DOM pattern to capture the flag:</p>
+            
+            <input type="text" id="urlInput" placeholder="Enter extracted URL here..." value="https://wgg522pwivhvi5gqsn675gth3q0otdja.lambda-url.us-east-1.on.aws/636865" />
+            <button id="captureBtn" onclick="captureFlag()">CAPTURE FLAG</button>
+        </div>
+
+        <div id="errorDiv" class="error"></div>
+        
+        <div id="flagContainer">
+            <h2 style="margin-bottom: 15px; color: #ffff00; display: none;" id="flagTitle">Flag Captured!</h2>
+            <div id="flagDisplay" class="flag-display"></div>
+            <div id="successDiv" class="success">
+                <strong style="color: #ffff00;">FLAG CAPTURE COMPLETE! 🎉</strong>
+                <br />
+                <small id="flagLength" style="color: #ccc;"></small>
+            </div>
+        </div>
+
+        <div class="solution-notes">
+            <strong>Solution Notes:</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li><strong>DOM Pattern:</strong> section[data-id*="92"] > article[data-class*="45"] > div[data-tag*="78"] > b.ref[value]</li>
+                <li><strong>Extraction Method:</strong> JavaScript console script to find and concatenate characters</li>
+                <li><strong>Hidden URL:</strong> https://wgg522pwivhvi5gqsn675gth3q0otdja.lambda-url.us-east-1.on.aws/636865</li>
+                <li><strong>Captured Flag:</strong> "cheerly"</li>
+                <li><strong>Display:</strong> Typewriter effect with 100ms character delay</li>
+            </ul>
+        </div>
+
+        <div class="instructions">
+            <strong>Technical Implementation:</strong>
+            <ol style="margin: 10px 0; padding-left: 20px;">
+                <li>Analyzed HTML DOM structure of the challenge page</li>
+                <li>Created JavaScript extraction script using querySelector patterns</li>
+                <li>Extracted characters from b.ref[value] attributes in document order</li>
+                <li>Concatenated characters to form the hidden URL</li>
+                <li>Implemented fetch API to retrieve flag from hidden endpoint</li>
+                <li>Created typewriter animation effect for flag display</li>
+                <li>Built responsive CTF-themed user interface</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let isCapturing = false;
+        
+        async function captureFlag() {
+            const urlInput = document.getElementById('urlInput');
+            const captureBtn = document.getElementById('captureBtn');
+            const errorDiv = document.getElementById('errorDiv');
+            const flagContainer = document.getElementById('flagContainer');
+            const flagDisplay = document.getElementById('flagDisplay');
+            const successDiv = document.getElementById('successDiv');
+            const flagLength = document.getElementById('flagLength');
+            const flagTitle = document.getElementById('flagTitle');
+
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showError('Please enter a URL');
+                return;
+            }
+
+            if (isCapturing) {
+                return;
+            }
+
+            isCapturing = true;
+            captureBtn.disabled = true;
+            captureBtn.textContent = 'FETCHING FLAG...';
+            errorDiv.style.display = 'none';
+            flagDisplay.style.display = 'none';
+            flagTitle.style.display = 'none';
+            successDiv.style.display = 'none';
+            flagDisplay.innerHTML = '';
+
+            try {
+                console.log('Fetching flag from:', url);
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const flagText = await response.text();
+                console.log('Flag received:', flagText);
+                
+                // Show flag container
+                flagTitle.style.display = 'block';
+                flagDisplay.style.display = 'block';
+                
+                // Start typewriter effect
+                await typewriterEffect(flagText, flagDisplay);
+                
+                // Show success message
+                flagLength.textContent = `Length: ${flagText.length} characters`;
+                successDiv.style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error fetching flag:', error);
+                showError(`Failed to fetch flag: ${error.message}`);
+            } finally {
+                isCapturing = false;
+                captureBtn.disabled = false;
+                captureBtn.textContent = 'CAPTURE FLAG';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorDiv');
+            errorDiv.innerHTML = `<strong>ERROR:</strong> ${message}`;
+            errorDiv.style.display = 'block';
+        }
+
+        async function typewriterEffect(text, container) {
+            container.innerHTML = '';
+            
+            for (let i = 0; i < text.length; i++) {
+                container.innerHTML += text[i];
+                
+                // Add blinking cursor
+                container.innerHTML += '<span class="cursor">▌</span>';
+                
+                // Wait for typewriter delay
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Remove cursor for next character
+                container.innerHTML = container.innerHTML.replace('<span class="cursor">▌</span>', '');
+            }
+            
+            // Final display without cursor
+            container.innerHTML = text;
+        }
+
+        // Allow Enter key to trigger capture
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                captureFlag();
+            }
+        });
+
+        // Auto-run on page load for demo
+        window.addEventListener('load', function() {
+            // Uncomment the line below to auto-run the flag capture on page load
+            // setTimeout(() => captureFlag(), 1000);
+        });
+    </script>
+</body>
+</html>
